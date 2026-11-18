@@ -21,7 +21,7 @@ const dirname = path.dirname(filename)
 
 
 
-const isSelfHosted = Boolean(process.env.DATABASE_URI)
+const isSelfHosted = Boolean(process.env.DATABASE_URL)
 
 const baseConfig: Omit<Config, 'db' | 'secret'> = {
   admin: {
@@ -72,7 +72,7 @@ export default isSelfHosted
       secret: process.env.PAYLOAD_SECRET || '',
       db: postgresAdapter({
         pool: {
-          connectionString: process.env.DATABASE_URI || '',
+          connectionString: process.env.DATABASE_URL || '',
         },
       }),
     })
@@ -80,4 +80,5 @@ export default isSelfHosted
       ...baseConfig,
       figma: {},
     })
+
 
