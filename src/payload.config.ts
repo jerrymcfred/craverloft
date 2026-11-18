@@ -1,5 +1,11 @@
 import path from 'path'
 import { buildFigmaConfig } from '@payloadcms/figma'
+
+import { buildConfig, type Config } from 'payload'
+import { postgresAdapter } from '@payloadcms/db-postgres'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+
+
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { en as adminLanguage } from '@payloadcms/translations/languages/en'
 import { fileURLToPath } from 'url'
@@ -13,7 +19,11 @@ import { Projects } from './collections/Projects'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-export default buildFigmaConfig({
+
+
+const isSelfHosted = Boolean(process.env.DATABASE_URI)
+
+const baseConfig: Omit<Config, 'db' | 'secret'> = {
   admin: {
     user: Admins.slug,
     constrainWidth: true,
@@ -30,7 +40,7 @@ export default buildFigmaConfig({
   },
   i18n: {
     fallbackLanguage: 'en',
-    supportedLanguages: { 'en': adminLanguage },
+    supportedLanguages: { en: adminLanguage },
   },
   collections: [Admins, Media, Folders, Tags, Projects, Inquiries],
   typescript: {
@@ -41,6 +51,33 @@ export default buildFigmaConfig({
     fallback: true,
     defaultLocale: 'en',
   },
-  plugins: [mcpPlugin({})],
-  figma: {},
-})
+  plugins: [
+    mcpPlugin({})
+  ],
+  storage: isSelfHosted
+  ? [
+      vercelBlobStorage({
+        collections: {
+          media: true,
+        },
+        token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      }),
+    ]
+  : [],
+}
+
+export default isSelfHosted
+  ? buildConfig({
+      ...baseConfig,
+      secret: process.env.PAYLOAD_SECRET || '',
+      db: postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URI || '',
+        },
+      }),
+    })
+  : buildFigmaConfig({
+      ...baseConfig,
+      figma: {},
+    })
+

@@ -54,7 +54,7 @@ export default function ContactForm({ defaultService = 'not-sure' }: { defaultSe
       </div>
 
       <fieldset className="grid gap-2">
-        <legend className="eyebrow mb-2">What do you need?</legend>
+        <legend className="eyebrow mb-1">What do you need?</legend>
         <div className="flex flex-wrap gap-2">
           {serviceOptions.map((o) => (
             <label key={o.value} className="cursor-pointer">

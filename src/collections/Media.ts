@@ -3,6 +3,10 @@ import type { CollectionConfig } from 'payload'
 
 import { createFolderField, createTagField } from 'payload'
 
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+const isSelfHosted = Boolean(process.env.DATABASE_URI)
+
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {

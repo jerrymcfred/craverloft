@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
+const isSelfHosted = Boolean(process.env.DATABASE_URI)
+
 const makePublicPreviewOrigin = (() => {
   const publicURL = process.env.FIGMA_PUBLIC_URL
   if (!publicURL) return undefined
@@ -32,10 +34,20 @@ const nextConfig: NextConfig = {
     root: path.resolve(dirname),
   },
   output: 'standalone',
-  images: {
-    loader: 'custom',
-    loaderFile: './figma-image-loader.ts',
-  },
+  images: isSelfHosted
+    ? {
+        remotePatterns: [
+          {
+            protocol: 'https',
+            hostname: '*.public.blob.vercel-storage.com',
+          },
+        ],
+      }
+    : {
+        loader: 'custom',
+        loaderFile: './figma-image-loader.ts',
+      },
+  
   // Don't block publishing or preview deploys on errors if the emitted JS is valid
   typescript: {
     ignoreBuildErrors: true,
