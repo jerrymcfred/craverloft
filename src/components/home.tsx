@@ -131,7 +131,7 @@ export function Manifesto() {
         {parts.map((w2, i) => <span key={i} className="transition-opacity duration-500" style={{ opacity: 0.18 }}>{w2}{' '}</span>)}
       </p>
       <div className="mt-20 grid gap-10 border-t border-line pt-10 sm:grid-cols-3">
-        {[[12, '+', 'Years building software'], [70, '+', 'Products shipped'], [8, '', 'Industries served']].map(([n, s, l]) => (
+        {[[3, '+', 'Years building software'], [20, '+', 'Products shipped'], [5, '', 'Industries served']].map(([n, s, l]) => (
           <div key={String(l)}><p className="text-6xl font-medium tracking-tight sm:text-7xl"><Counter to={n as number} suffix={s as string} /></p><p className="eyebrow mt-3">{l}</p></div>
         ))}
       </div>
